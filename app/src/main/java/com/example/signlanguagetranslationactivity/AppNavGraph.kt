@@ -18,7 +18,7 @@ fun AppNavGraph(startDestination: String = "home") {
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable("home") {
-            HomeScreen(onNavigate = { route -> navController.navigate(route) })
+            ModernHomeScreen(onNavigate = { route -> navController.navigate(route) })
         }
         composable("voice_to_asl") {
             VoiceToGifScreen()  // You already have this screen
