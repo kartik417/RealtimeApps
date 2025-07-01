@@ -13,35 +13,54 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun AppNavGraph(startDestination: String = "home") {
+fun AppNavGraph(startDestination: String = Screen.Login.route) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = startDestination) {
-        composable("home") {
-            ModernHomeScreen(onNavigate = { route -> navController.navigate(route) })
-        }
-        composable("voice_to_asl") {
-            VoiceToGifScreen()  // You already have this screen
-        }
-        composable("text_to_asl") {
-            TextToASLScreen()
-        }
-        composable("sign_to_text") {
-          CameraPermissionAndASLScreen()
+
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onLoginSuccess = { navController.navigate(Screen.Home.route) },
+                onNavigateToSignup = { navController.navigate(Screen.Signup.route) }
+            )
         }
 
-        composable("settings") {
-            PlaceholderScreen("Settings")
+        composable(Screen.Signup.route) {
+            SignupScreen(
+                onSignupSuccess = { navController.navigate(Screen.Home.route) },
+                onNavigateToLogin = {
+                    navController.popBackStack(Screen.Login.route, inclusive = false)
+                }
+            )
         }
-        composable("help") {
-            PlaceholderScreen("Help")
+
+        composable(Screen.Home.route) {
+            ModernHomeScreen(onNavigate = { route -> navController.navigate(route) })
         }
+
+        composable(Screen.VoiceToASL.route) { VoiceToGifScreen() }
+        composable(Screen.TextToASL.route) { TextToASLScreen() }
+        composable(Screen.SignToText.route) { CameraPermissionAndASLScreen() }
+        composable(Screen.Settings.route) { PlaceholderScreen("Settings") }
+        composable(Screen.Help.route) { PlaceholderScreen("Help") }
     }
 }
+
 
 @Composable
 fun PlaceholderScreen(title: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("Coming Soon: $title", style = MaterialTheme.typography.headlineSmall)
     }
+}
+
+sealed class Screen(val route: String) {
+    object Login : Screen("login")
+    object Signup : Screen("signup")
+    object Home : Screen("home")
+    object VoiceToASL : Screen("voice_to_asl")
+    object TextToASL : Screen("text_to_asl")
+    object SignToText : Screen("sign_to_text")
+    object Settings : Screen("settings")
+    object Help : Screen("help")
 }

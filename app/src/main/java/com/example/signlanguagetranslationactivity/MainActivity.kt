@@ -19,7 +19,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SignLanguageTranslationActivityTheme {
-                AppNavGraph()
+                AppNavGraph(startDestination = Screen.Login.route)
+
             }
         }
     }

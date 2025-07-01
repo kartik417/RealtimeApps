@@ -29,6 +29,7 @@ fun ModernHomeScreen(onNavigate: (String) -> Unit = {}) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
+
                 }
             )
         },
@@ -75,16 +76,29 @@ fun ModernHomeScreen(onNavigate: (String) -> Unit = {}) {
                 .padding(padding)
                 .padding(16.dp)
         ) {
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Welcome!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Welcome!",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    GifImage(
+                        rawResId = R.drawable.animation,
+                        modifier = Modifier.size(100.dp)
+                    )
+                }
+
 
                 FeatureCardModern("🎤 Voice to ASL", "Speak and see sign animation", Icons.Default.Mic) {
                     onNavigate("voice_to_asl")
@@ -130,10 +144,4 @@ fun FeatureCardModern(title: String, subtitle: String, icon: androidx.compose.ui
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ModernHomeScreenPreview() {
-    MaterialTheme {
-        ModernHomeScreen()
-    }
-}
+
