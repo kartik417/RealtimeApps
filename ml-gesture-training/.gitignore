@@ -1,0 +1,10 @@
+# Ignore training data and outputs
+data/
+*.csv
+*.pkl
+*.png
+
+# Ignore Python environment and cache
+env/
+__pycache__/
+*.pyc
