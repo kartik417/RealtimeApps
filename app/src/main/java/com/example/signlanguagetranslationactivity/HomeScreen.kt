@@ -10,11 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModernHomeScreen(onNavigate: (String) -> Unit = {}) {
@@ -26,15 +26,16 @@ fun ModernHomeScreen(onNavigate: (String) -> Unit = {}) {
                 title = {
                     Text(
                         text = "🤟 Sign Translator",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 22.sp,
+                        color = Color.White
                     )
-
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF3F51B5))
             )
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(containerColor = Color.White) {
                 NavigationBarItem(
                     selected = selectedTab == 0,
                     onClick = {
@@ -65,83 +66,121 @@ fun ModernHomeScreen(onNavigate: (String) -> Unit = {}) {
             }
         }
     ) { padding ->
-        Box(
+
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color(0xFFE3F2FD), Color(0xFFBBDEFB))
+                        listOf(Color(0xFFE8EAF6), Color(0xFF7986CB))
                     )
                 )
                 .padding(padding)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            // Hero Section
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Column {
                     Text(
-                        text = "Welcome!",
+                        text = "Welcome back!",
                         style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E)
                     )
-
-                    GifImage(
-                        rawResId = R.drawable.animation,
-                        modifier = Modifier.size(100.dp)
+                    Text(
+                        text = "Translate between sign and speech in real time.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.DarkGray
                     )
                 }
 
+                GifImage(
+                    rawResId = R.drawable.animation,
+                    modifier = Modifier.size(90.dp)
+                )
+            }
 
-                FeatureCardModern("🎤 Voice to ASL", "Speak and see sign animation", Icons.Default.Mic) {
-                    onNavigate("voice_to_asl")
-                }
+            // Cards
+            FeatureCardModern(
+                title = "🎤 Voice to ASL",
+                subtitle = "Speak and see live sign animation",
+                icon = Icons.Default.Mic,
+                color = Color(0xFF64B5F6)
+            ) {
+                onNavigate("voice_to_asl")
+            }
 
-                FeatureCardModern("⌨️ Text to ASL", "Type and convert to signs", Icons.Default.TextFields) {
-                    onNavigate("text_to_asl")
-                }
+            FeatureCardModern(
+                title = "⌨️ Text to ASL",
+                subtitle = "Type and convert to signs",
+                icon = Icons.Default.TextFields,
+                color = Color(0xFF9575CD)
+            ) {
+                onNavigate("text_to_asl")
+            }
 
-                FeatureCardModern("✋ ASL to Text", "Show gestures, get words", Icons.Default.Gesture) {
-                    onNavigate("sign_to_text")
-                }
+            FeatureCardModern(
+                title = "✋ ASL to Text",
+                subtitle = "Show signs, get text back",
+                icon = Icons.Default.Gesture,
+                color = Color(0xFF4DB6AC)
+            ) {
+                onNavigate("sign_to_text")
             }
         }
     }
 }
 
 @Composable
-fun FeatureCardModern(title: String, subtitle: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
+fun FeatureCardModern(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    color: Color,
+    onClick: () -> Unit
+) {
     Card(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.95f)),
-        elevation = CardDefaults.cardElevation(8.dp),
-        shape = MaterialTheme.shapes.medium
+            .height(110.dp),
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.98f))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(40.dp)
+            )
             Column {
-                Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(subtitle, style = MaterialTheme.typography.bodySmall)
+                Text(title, fontWeight = FontWeight.SemiBold, fontSize = 18.sp, color = Color.Black)
+                Text(subtitle, fontSize = 14.sp, color = Color.DarkGray)
             }
         }
     }
 }
 
 
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PreviewModernHomeScreen() {
+    MaterialTheme {
+        ModernHomeScreen()
+    }
+}

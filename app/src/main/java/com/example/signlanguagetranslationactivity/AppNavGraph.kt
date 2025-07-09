@@ -1,5 +1,6 @@
 package com.example.signlanguagetranslationactivity
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -11,9 +12,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.signlanguagetranslationactivity.hand_gesture_detection.CameraPermissionWrapper
+import com.example.signlanguagetranslationactivity.user_info.HelpScreen
 import com.example.signlanguagetranslationactivity.user_info.LoginScreen
 import com.example.signlanguagetranslationactivity.user_info.SignupScreen
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun AppNavGraph(startDestination: String = Screen.Home.route) {
     val navController = rememberNavController()
@@ -46,7 +49,7 @@ fun AppNavGraph(startDestination: String = Screen.Home.route) {
         composable(Screen.TextToASL.route) { TextToASLScreen() }
         composable(Screen.SignToText.route) { CameraPermissionWrapper() }
         composable(Screen.Settings.route) { PlaceholderScreen("Settings") }
-        composable(Screen.Help.route) { PlaceholderScreen("Help") }
+        composable(Screen.Help.route) { HelpScreen() }
     }
 }
 

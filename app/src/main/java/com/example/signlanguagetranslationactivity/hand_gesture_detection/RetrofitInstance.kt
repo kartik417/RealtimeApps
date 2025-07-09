@@ -4,7 +4,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://192.168.91.182:5000"
+    private const val BASE_URL = "http://10.27.163.182:5000/"
+
 
     val api: GestureApiService by lazy {
         Retrofit.Builder()

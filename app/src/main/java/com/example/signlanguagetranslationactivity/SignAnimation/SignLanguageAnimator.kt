@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -15,7 +16,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.permissions.*
@@ -53,60 +58,86 @@ fun VoiceToGifScreen() {
         "happy" to R.drawable.happy,
         "mom" to R.drawable.mom,
         "excuse" to R.drawable.excuse,
-        "happy" to R.drawable.happy,
         "help" to R.drawable.help,
         "thank you" to R.drawable.thank_you,
         "who" to R.drawable.who,
-
     )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFFE3F2FD), Color(0xFF90CAF9))
+                )
+            )
             .padding(16.dp)
-            .systemBarsPadding() // <-- avoids overlap with status and nav bars
+            .systemBarsPadding()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 80.dp), // leave space for button
+                .padding(bottom = 90.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
+
             Spacer(modifier = Modifier.height(16.dp))
 
+            // 🖼️ GIF Preview
             gifResId?.let {
-                GifImage(
-                    rawResId = it,
-                    modifier = Modifier
-                        .size(220.dp)
-                        .padding(8.dp)
-                )
+                Card(
+                    elevation = CardDefaults.cardElevation(6.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+                    GifImage(
+                        rawResId = it,
+                        modifier = Modifier
+                            .size(240.dp)
+                            .padding(16.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = if (recognizedText.isNotEmpty()) "Recognized Text:\n$recognizedText" else "🎤 Tap the mic below to speak...",
-                fontSize = 18.sp,
-                lineHeight = 24.sp,
-                modifier = Modifier.padding(12.dp),
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            // 📝 Recognized Text Display
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                elevation = CardDefaults.cardElevation(4.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Recognized Text",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A237E),
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = if (recognizedText.isNotEmpty()) recognizedText else "🎤 Tap the mic below to speak...",
+                        fontSize = 15.sp,
+                        color = Color.DarkGray
+                    )
+                }
+            }
 
             if (recognizedText.isNotEmpty() && gifResId == null) {
                 Text(
                     text = "⚠️ No sign image found for \"$recognizedText\".",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(top = 8.dp)
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(top = 12.dp)
                 )
             }
         }
 
-        // Bottom mic button
+        // 🎙️ Bottom Floating Mic Button
         Box(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
             SpeechToTextComposable { spokenText ->
@@ -116,6 +147,8 @@ fun VoiceToGifScreen() {
         }
     }
 }
+
+
 @Composable
 fun SpeechToTextComposable(onResult: (String) -> Unit) {
     val context = LocalContext.current
@@ -174,19 +207,16 @@ fun SpeechToTextComposable(onResult: (String) -> Unit) {
         onDispose { recognizer.destroy() }
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Status text for feedback
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = statusText,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 8.dp),
-            fontSize = 16.sp
+            color = if (isListening) Color(0xFF1A237E) else Color.DarkGray,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
-        // Mic Button with Glow while listening
-        IconButton(
+        // Mic with glowing ring while listening
+        Surface(
             onClick = {
                 if (isListening) {
                     recognizer.stopListening()
@@ -197,21 +227,33 @@ fun SpeechToTextComposable(onResult: (String) -> Unit) {
                 }
                 isListening = !isListening
             },
+            shape = CircleShape,
+            color = Color.White,
+            tonalElevation = 6.dp,
             modifier = Modifier
-                .size(80.dp)
-                .padding(8.dp)
-                .then(if (isListening) Modifier.border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
+                .size(90.dp)
+                .border(
+                    width = if (isListening) 3.dp else 1.dp,
+                    color = if (isListening) Color(0xFF1E88E5) else Color.LightGray,
                     shape = CircleShape
-                ) else Modifier)
+                )
         ) {
-            Icon(
-                imageVector = if (isListening) Icons.Default.Mic else Icons.Default.MicNone,
-                contentDescription = if (isListening) "Stop Listening" else "Start Listening",
-                tint = if (isListening) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.size(48.dp)
-            )
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = if (isListening) Icons.Default.Mic else Icons.Default.MicNone,
+                    contentDescription = null,
+                    tint = if (isListening) Color(0xFF1E88E5) else Color.DarkGray,
+                    modifier = Modifier.size(44.dp)
+                )
+            }
         }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PreviewVoiceToGifScreen() {
+    MaterialTheme {
+        VoiceToGifScreen()
     }
 }
